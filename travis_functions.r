@@ -66,6 +66,7 @@ append_filepath <- function(addition){
 
 
 selection_by_location <-function(base_layer,selection_layer){
+  ###*NOTE: CURRENTLY HAS ISSUES WITH OUTPUT*###
   # Takes a base layer object and selects all objects in a selection layer based on the base layer's ID field. Both input objects
   # must be of one of the three vector SpatialXDataFrame objects (i.e. all spatial data frame types except Grid). If no ID field
   #  exists in the base layer object, one is assigned.
@@ -85,7 +86,8 @@ selection_by_location <-function(base_layer,selection_layer){
   if (input %in% base_layer$ID){
     input_logic <- vector(length = length(selection_layer))
     for (i in (1:length(selection_layer))){input_logic[i] <- gIntersects(base_layer[input+1,],selection_layer[i,])}
-    # plot(selection_layer) ###Activate this line to graph the selection with respect to full context. If you add this line back in, be sure to add "add=TRUE" to next line
+    # plot(selection_layer) ###Activate this line to graph the selection with respect to full context. If you add this line back in, 
+    # be sure to add "add=TRUE" to next line
     plot(selection_layer[input_logic,],col="green")
     if (class(base_layer)=="SpatialPolygonsDataFrame"){
       baselines <- as(base_layer,"SpatialLinesDataFrame")
