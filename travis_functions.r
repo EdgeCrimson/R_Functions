@@ -148,15 +148,16 @@ agg_shared_polypts <- function(input){
 
 
 
-markov_chain <- function(init,trans,trials=100,return_final=FALSE){
+markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_position=0){
   # Performs a markov chain procedure for an initial vector of length N with square transition matrix of dimension N. Accepts four
   # inputs: the initial vector, the transition matrix, the number of trials desired for iteration, and a variable that determines
   # the type and amount of output: if no 'return_value' is passed to the function, it will return the entire result chain from the
-  # Markov process; if 'return_final' is passed 'TRUE', it will return the final probability as a result; if 'return_final' is
-  # passed with a positive integer 'X', it will return the last 'X' probabilities from the procedure. The number of 'trials'
-  # defaults to 100, and the type of output defaults to the entire chain. Will reject input and provide helpful feedback to fix
-  # the issue if any of the following are true: 'trans' is not a square matrix, the length of 'init' does not match the dimension
-  # of 'trans'
+  # Markov process; if 'return_final' is passed 'TRUE', it will return the final probability vector as a result; if 'return_final'
+  # is passed with a positive integer 'X', it will return the last 'X' probability vectors from the procedure. The number of
+  # 'trials' defaults to 100, and the type of output defaults to the entire chain. Will reject input and provide helpful feedback
+  # to fix the issue if any of the following are true: 'trans' is not a square matrix, the length of 'init' does not match the
+  # dimension of 'trans'. If a return_position is passed to the function, the output will be the list of probabilities for the
+  # given position instead of probability vectors for all positions.
 
   # Checks to make sure the dimensions of 'init' and 'trans' are acceptable:
   if (dim(trans)[1] != dim(trans)[2]){
@@ -212,20 +213,55 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE){
     }
   }
 
+
+
+
+  if (return_position==0){
+    check_for_position <- FALSE
+  }
+  else{
+    if (class(return_position)=="numeric"){
+      if (round(return_position)==return_position){
+        if (return_position>0 & return_position<=L){
+          check_for_position <- TRUE
+        }
+        else{
+          return("The entry that you would like to return must be a positive integer less than or equal to the length.")
+        }
+      }
+      else{
+        return("The position in a vector must be an integer!")
+      }
+    }
+    else{
+      return("'return_position' must be a number.")
+    }
+  }
+
   # If all conditions are satisfied, performs the following:
-  result <- c()
+  if (check_for_position==TRUE){
+    result_list <- c()
+  }
+  else{
+    result_list <- list()
+  }
   iter_init <- init
   for (i in c(1:trials)){
     iter_init <- iter_init %*% trans
-    result[i]=iter_init[6]
+    if (check_for_position==TRUE){
+      result_list[i] <- iter_init[return_position]
+    }
+    else{
+      result_list[[i]]<-as.list(iter_init)
+    }
   }
   if (return_final==FALSE){
-    return(result)
+    return(result_list)
   }
   if (return_final==TRUE){
-    return(tail(result,1))
+    return(tail(result_list,1))
   }
   else{
-    return(tail(result,return_final))
+    return(tail(result_list,return_final))
   }
 }
