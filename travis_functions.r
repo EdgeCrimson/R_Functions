@@ -196,7 +196,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
     return("'trials' must be an integer.")
   }
 
-  # Checks 'return_final' for validity before returning result:
+  # Checks 'return_final' for validity
   if ((class(return_final) %in% c("logical","numeric")) == FALSE){
     return("'return_final' must either be boolean or an integer.")
   }
@@ -213,9 +213,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
     }
   }
 
-
-
-
+  # Checks 'return_position' for validity:
   if (return_position==0){
     check_for_position <- FALSE
   }
