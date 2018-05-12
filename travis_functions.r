@@ -1,6 +1,6 @@
 quality_threshold <- function(quality_per_unit=2.25,descriptive_output=FALSE){
-  # Computes the minimum quality percent level of an item to be worth picking up based on object shape in grid. Defaults to 2.25.\
-  # You may specify if you would like a printed description or just the 4-tuple as output. Defaults to 4-tuple output. Intended for\
+  # Computes the minimum quality percent level of an item to be worth picking up based on object shape in grid. Defaults to 2.25.
+  # You may specify if you would like a printed description or just the 4-tuple as output. Defaults to 4-tuple output. Intended for
   # use in the Steam game, Path of Exile.
   classes <- c(3,4,6,8)
   quality <- 0
@@ -50,6 +50,7 @@ quality_threshold <- function(quality_per_unit=2.25,descriptive_output=FALSE){
 
 
 
+
 load_GIS_lib <- function(){
   # Loads the most common plotting packages for geomapping in R
   x <- c("rgeos","tmap","ggmap","rgdal","maptools","dplyr","tidyr")
@@ -58,10 +59,12 @@ load_GIS_lib <- function(){
 
 
 
-append_filepath <- function(addition){
+
+appendwd <- function(addition){
   # Allows a user to set their working directory to a child path by passing a character containing the remaining filepath as input
   setwd(paste(gsub("/","\\\\",getwd()),addition,sep="\\"))
 }
+
 
 
 
@@ -95,6 +98,7 @@ selection_by_location <-function(base_layer,selection_layer){
     else {plot(base_layer[input+1],col="green",add=TRUE)}
   }
 }
+
 
 
 
@@ -142,3 +146,86 @@ agg_shared_polypts <- function(input){
 }
 
 
+
+
+markov_chain <- function(init,trans,trials=100,return_final=FALSE){
+  # Performs a markov chain procedure for an initial vector of length N with square transition matrix of dimension N. Accepts four
+  # inputs: the initial vector, the transition matrix, the number of trials desired for iteration, and a variable that determines
+  # the type and amount of output: if no 'return_value' is passed to the function, it will return the entire result chain from the
+  # Markov process; if 'return_final' is passed 'TRUE', it will return the final probability as a result; if 'return_final' is
+  # passed with a positive integer 'X', it will return the last 'X' probabilities from the procedure. The number of 'trials'
+  # defaults to 100, and the type of output defaults to the entire chain. Will reject input and provide helpful feedback to fix
+  # the issue if any of the following are true: 'trans' is not a square matrix, the length of 'init' does not match the dimension
+  # of 'trans'
+
+  # Checks to make sure the dimensions of 'init' and 'trans' are acceptable:
+  if (dim(trans)[1] != dim(trans)[2]){
+    return("'trans' must be a square matrix.")
+  }
+  if (dim(init)[2] != dim(trans)[1]){
+    return("The rank of 'init' must be equal to the dimension of square matrix 'trans'.")
+  }
+
+  # Checks to make sure 'init' is a probability vector and that 'trans' is a transition matrix:
+  L <- length(init)
+  prob_check <- rep(0,L+1)
+  prob_check[1] <- sum(init)
+  for (i in c(1:L)){
+    prob_check[i+1] <- sum(trans[i,])
+  }
+  prob_check_error <- abs(1-prob_check)
+  if (all(prob_check_error<0.001)==FALSE){
+    return("All probabality vectors must sum to 1. This also means that all rows of the transition matrix must sum to 1.")
+  }
+
+  # Checks 'trials' for validity:
+  if (class(trials)=="numeric"){
+    if (round(trials)==trials){
+      if (trials>0){
+      }
+      else{
+        return("Please enter a positive integer amount of trials to perform.")
+      }
+    }
+    else{
+      return("Cannot perform a non-integer amount of trials!")
+    }
+  }
+  else{
+    return("'trials' must be an integer.")
+  }
+
+  # Checks 'return_final' for validity before returning result:
+  if ((class(return_final) %in% c("logical","numeric")) == FALSE){
+    return("'return_final' must either be boolean or an integer.")
+  }
+  if (class(return_final)=="numeric"){
+    if (round(return_final)==return_final){
+      if (return_final>0){
+      }
+      else{
+        return("Please enter a positive integer amount of entries to return.")
+      }
+    }
+    else{
+      return("Cannot return a non-integer number of entries!")
+    }
+  }
+
+  # If all conditions are satisfied, performs the following:
+  result <- c()
+  iter_init <- init
+  for (i in c(1:trials)){
+    iter_init <- iter_init %*% trans
+    result[i]=iter_init[6]
+  }
+  if (return_final==FALSE){
+    return(result)
+  }
+  if (return_final==TRUE){
+    return(tail(result,1))
+  }
+  else{
+    return(tail(result,return_final))
+  }
+}
