@@ -263,3 +263,103 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
     return(tail(result_list,return_final))
   }
 }
+
+
+
+
+sample_markov <- function(init,trans,limit_state=1){
+  # This code performs a Markov Chain procedure based on passed initial state vector 'init' and transition matrix 'trans' and then
+  # performs a random selection. For each probability vector for a given amount of iterations of the Markov Process, for a given
+  # 'limit_state', if the random selection happens to lie within the the range of the cumulative probability of the state prior
+  # to the limit_state (or zero if for state 1) and the cumulative probability of the limit_state, then the function returns the
+  # number of iterations that have passed as output. Otherwise, the next probability vector resulting from the next iteration of
+  # the Markov Process is calculated, and the above repeats. 'limit_state' defaults to state 1. If over one million steps pass
+  # without a successful random selection, the function will terminate and return "NULL".
+
+  # Checks to make sure the dimensions of 'init' and 'trans' are acceptable:
+  if (class(init) == "numeric"){
+    init <- t(as.matrix(init))
+  }
+  if (dim(trans)[1] != dim(trans)[2]){
+    return("'trans' must be a square matrix.")
+  }
+  if (dim(init)[2] != dim(trans)[1]){
+    return("The rank of 'init' must be equal to the dimension of square matrix 'trans'.")
+  }
+
+  # Checks to make sure 'init' is a probability vector and that 'trans' is a transition matrix:
+  L <- length(init)
+  prob_check <- rep(0,L+1)
+  prob_check[1] <- sum(init)
+  for (i in c(1:L)){
+    prob_check[i+1] <- sum(trans[i,])
+  }
+  prob_check_error <- abs(1-prob_check)
+  if (all(prob_check_error<0.001)==FALSE){
+    return("All probabality vectors must sum to 1. This also means that all rows of the transition matrix must sum to 1.")
+  }
+
+  # Checks 'limit_state' for validity:
+  if (class(limit_state)=="numeric"){
+    if (round(limit_state)==limit_state){
+      if (limit_state>0){
+      }
+      else{
+        return("Please enter a positive integer amount of limit_state to perform.")
+      }
+    }
+    else{
+      return("Cannot perform a non-integer amount of limit_state!")
+    }
+  }
+  else{
+    return("'limit_state' must be an integer.")
+  }
+
+  # If everything above checks out, the Markov Chain random selection proceeds:
+  continue <- TRUE
+  count <- 0
+  current_state <- init
+  while (continue == TRUE){
+    if (count > 1e+06){
+      continue <- FALSE
+    }
+    count <- count + 1
+    transition_prob <- current_state %*% trans
+    cumulative_prob <- transition_prob
+    state <- -1
+    for (i in c(2:L)){
+      cumulative_prob[1,i]<- cumulative_prob[1,i]+cumulative_prob[1,i-1]
+    }
+    rand_value <- runif(1)
+    # The lines below can be included for observation or debugging purposes:
+    # print(paste(rand_value," : ",count,sep=""))
+    # print(cumulative_prob)
+    # writeLines("\n\n")
+    if (rand_value >= 0 & rand_value < cumulative_prob[1,1]){
+      state <- 1
+    }
+    for (i in c(2:L)){
+      if (rand_value > cumulative_prob[1,i-1] & rand_value < cumulative_prob[1,i]){
+        state <- i
+      }
+    }
+    if (state == -1){
+      state <- L
+    }
+    if (state == limit_state){
+      continue <- FALSE
+    }
+    else{
+      current_state <- transition_prob
+    }
+  }
+  if (count > 1e+06){
+    return(NULL)
+  }
+  else{
+    return(count)
+  }
+}
+
+
