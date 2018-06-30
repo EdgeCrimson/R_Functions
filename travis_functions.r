@@ -158,15 +158,15 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   # to fix the issue if any of the following are true: 'trans' is not a square matrix, the length of 'init' does not match the
   # dimension of 'trans'. If a return_position is passed to the function, the output will be the list of probabilities for the
   # given position instead of probability vectors for all positions.
-
+  
   # Checks to make sure the dimensions of 'init' and 'trans' are acceptable:
   if (dim(trans)[1] != dim(trans)[2]){
     return("'trans' must be a square matrix.")
   }
-  if (dim(init)[2] != dim(trans)[1]){
+  if (dim(as.matrix(init))[1] != dim(trans)[1]){
     return("The rank of 'init' must be equal to the dimension of square matrix 'trans'.")
   }
-
+  
   # Checks to make sure 'init' is a probability vector and that 'trans' is a transition matrix:
   L <- length(init)
   prob_check <- rep(0,L+1)
@@ -178,7 +178,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   if (all(prob_check_error<0.001)==FALSE){
     return("All probabality vectors must sum to 1. This also means that all rows of the transition matrix must sum to 1.")
   }
-
+  
   # Checks 'trials' for validity:
   if (class(trials)=="numeric"){
     if (round(trials)==trials){
@@ -195,7 +195,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   else{
     return("'trials' must be an integer.")
   }
-
+  
   # Checks 'return_final' for validity
   if ((class(return_final) %in% c("logical","numeric")) == FALSE){
     return("'return_final' must either be boolean or an integer.")
@@ -212,7 +212,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
       return("Cannot return a non-integer number of entries!")
     }
   }
-
+  
   # Checks 'return_position' for validity:
   if (return_position==0){
     check_for_position <- FALSE
@@ -235,7 +235,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
       return("'return_position' must be a number.")
     }
   }
-
+  
   # If all conditions are satisfied, performs the following:
   if (check_for_position==TRUE){
     result_list <- c()
