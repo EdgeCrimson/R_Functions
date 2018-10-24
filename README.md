@@ -3,8 +3,8 @@ Contains my own functions in R. I also will list my current R keyboard shortcuts
 
 ## Keyboard Shortcuts:
 ### Panel Navigation:
-ctrl-1 => move focus to source\
-ctrl-2 => move focus to console\
+ctrl-1 => move focus to console\
+ctrl-2 => move focus to source\
 ctrl-3 => move focus to help pane\
 ctrl-4 => move focus to plots pane\
 ctrl-5 => move focus to environment pane\
@@ -13,8 +13,8 @@ ctrl-7 => move focus to files pane\
 ctrl-8 => move focus to packages pane\
 ctrl-9 => move focus to viewer pane
 
-ctrl-shift-1 => zoom source\
-ctrl-shift-2 => zoom console\
+ctrl-shift-1 => zoom console\
+ctrl-shift-2 => zoom source\
 ctrl-shift-3 => zoom help pane\
 ctrl-shift-4 => zoom plots pane\
 ctrl-shift-5 => zoom environment pane\
