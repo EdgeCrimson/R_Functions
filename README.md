@@ -1,5 +1,34 @@
 # R Functions
-Contains my own functions in R. I will update this document as the included functions are changed.
+Contains my own functions in R. I also will list my current R keyboard shortcuts here. I will update this document as the included functions are changed. 
+
+## Keyboard Shortcuts:
+### Panel Navigation:
+ctrl-1 => move focus to source\
+ctrl-2 => move focus to console\
+ctrl-3 => move focus to help pane\
+ctrl-4 => move focus to plots pane\
+ctrl-5 => move focus to environment pane\
+ctrl-6 => move focus to history pane\
+ctrl-7 => move focus to files pane\
+ctrl-8 => move focus to packages pane\
+ctrl-9 => move focus to viewer pane
+
+ctrl-shift-1 => zoom source\
+ctrl-shift-2 => zoom console\
+ctrl-shift-3 => zoom help pane\
+ctrl-shift-4 => zoom plots pane\
+ctrl-shift-5 => zoom environment pane\
+ctrl-shift-6 => zoom history pane\
+ctrl-shift-7 => zoom files pane\
+ctrl-shift-8 => zoom packages pane\
+ctrl-shift-9 => zoom viewer pane
+
+
+### Miscellaneous:
+ctrl-shift-G  =>  toggle chunk\
+ctrl-shift-F  =>  go to line\
+ctrl-alt-D    =>  clear console\
+ctrl-shift-x  =>  toggle comment
 
 ## Current Functions:
 quality_threshold(): Computes the minimum quality percent level of an item to be worth picking up based on object shape in grid. Defaults to 2.25. You may specify if you would like a printed description or just the 4-tuple as output. Defaults to 4-tuple output. Intended for use in the Steam game, Path of Exile.
