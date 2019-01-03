@@ -89,7 +89,7 @@ selection_by_location <-function(base_layer,selection_layer){
   if (input %in% base_layer$ID){
     input_logic <- vector(length = length(selection_layer))
     for (i in (1:length(selection_layer))){input_logic[i] <- gIntersects(base_layer[input+1,],selection_layer[i,])}
-    # plot(selection_layer) ###Activate this line to graph the selection with respect to full context. If you add this line back in, 
+    # plot(selection_layer) ###Activate this line to graph the selection with respect to full context. If you add this line back in,
     # be sure to add "add=TRUE" to next line
     plot(selection_layer[input_logic,],col="green")
     if (class(base_layer)=="SpatialPolygonsDataFrame"){
@@ -158,7 +158,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   # to fix the issue if any of the following are true: 'trans' is not a square matrix, the length of 'init' does not match the
   # dimension of 'trans'. If a return_position is passed to the function, the output will be the list of probabilities for the
   # given position instead of probability vectors for all positions.
-  
+
   # Checks to make sure the dimensions of 'init' and 'trans' are acceptable:
   if (dim(trans)[1] != dim(trans)[2]){
     return("'trans' must be a square matrix.")
@@ -166,7 +166,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   if (dim(as.matrix(init))[1] != dim(trans)[1]){
     return("The rank of 'init' must be equal to the dimension of square matrix 'trans'.")
   }
-  
+
   # Checks to make sure 'init' is a probability vector and that 'trans' is a transition matrix:
   L <- length(init)
   prob_check <- rep(0,L+1)
@@ -178,7 +178,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   if (all(prob_check_error<0.001)==FALSE){
     return("All probabality vectors must sum to 1. This also means that all rows of the transition matrix must sum to 1.")
   }
-  
+
   # Checks 'trials' for validity:
   if (class(trials)=="numeric"){
     if (round(trials)==trials){
@@ -195,7 +195,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
   else{
     return("'trials' must be an integer.")
   }
-  
+
   # Checks 'return_final' for validity
   if ((class(return_final) %in% c("logical","numeric")) == FALSE){
     return("'return_final' must either be boolean or an integer.")
@@ -212,7 +212,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
       return("Cannot return a non-integer number of entries!")
     }
   }
-  
+
   # Checks 'return_position' for validity:
   if (return_position==0){
     check_for_position <- FALSE
@@ -235,7 +235,7 @@ markov_chain <- function(init,trans,trials=100,return_final=FALSE,return_positio
       return("'return_position' must be a number.")
     }
   }
-  
+
   # If all conditions are satisfied, performs the following:
   if (check_for_position==TRUE){
     result_list <- c()
@@ -363,3 +363,38 @@ sample_markov <- function(init,trans,limit_state=1){
 }
 
 
+
+
+gen_randint <- function(number=1,minim=1,maxum=10,rep=TRUE,return_dummy=FALSE){
+  # Generates 'number' amount of random integers between the values of 'minim' and 'maxum'; these default to 1, 1, and 10
+  # respectively. By default, repetition is accepted, but one can specify to return only unique integers by changing 'rep'. If
+  # returning unique integers, one can indicated if they want to also return the actual list of generated integers that included
+  # repeat values.
+  if (rep==TRUE){
+    rand_vect <- floor(runif(n = number, min = minim, max = maxum+1))
+    return(rand_vect)
+  }
+  else {
+    if (number > 1 + maxum - minim){
+      return("You cannot have more unique results than available numbers to choose from.")
+    }
+    thresh <- 1
+    first <- floor(runif(n = 1, min = minim, max = maxum+1))
+    build_vect <- c(first)
+    dummy_vect <- c(first) ###
+    while (thresh < number){
+      next_num <- floor(runif(n=1, min = minim, max = maxum+1))
+      dummy_vect <- c(dummy_vect,next_num) ###
+      if (next_num %in% build_vect == FALSE){
+        build_vect <- c(build_vect,next_num)
+        thresh <- thresh + 1
+      }
+    }
+    if (return_dummy == TRUE){
+      retrn <- list("return_vector" = build_vect, "dummy_vector" = dummy_vect)
+      return(retrn)
+    }
+    retrn <- list("return_vector" = build_vect)
+    return(retrn)
+  }
+}
