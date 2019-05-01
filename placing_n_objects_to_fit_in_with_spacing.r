@@ -13,20 +13,20 @@ generate_spaces <- function(size = 4.5,
   round=TRUE)
   {
 
-  fill_space <- size - 2*edge - sm_size
-  sieve <- fill_space - (amt*sm_size)
-  print(paste("sieve is: ", sieve)) #
+  fill_space <- size - (2*edge) - sm_size
+  sieve <- fill_space - ((amt-1)*sm_size)
+  # print(paste("sieve is: ", sieve)) #
   inc <- sieve / (amt-1)
-  print(paste("inc is: ", inc)) #
+  # print(paste("inc is: ", inc)) #
 
   j <- start_height+edge
   res_j <- c(j)
 
   for (i in c(1:(amt-1))){
     # print(i) #
-    print(paste("J_before is: ",j)) #
-    j <- j + 0.5 + inc
-    print(paste("J_after is: ",j)) #
+    # print(paste("J_before is: ",j)) #
+    j <- j + sm_size + inc
+    # print(paste("J_after is: ",j)) #
     res_j <- c(res_j,j)
   }
 
